@@ -1,5 +1,7 @@
 var _ = require('underscore');
+var fs = require('fs');
 var scraperjs = require('scraperjs');
+var slug = require('slug');
 
 module.exports = function() {
     var scrapeRelease = function(url, callback) {
@@ -10,31 +12,54 @@ module.exports = function() {
     };
 
     var fetchReleaseLines = function(url, callback) {
-        scraperjs.StaticScraper
-            .create(url)
-            .scrape(function($) {
-                // Convert p and br tags into newlines
-                // http://stackoverflow.com/questions/3381331/jquery-convert-br-and-br-and-p-and-such-to-new-line
-                $.fn.nl2br = function() {
-                    return this.each(function(i) {
-                        var $this = $(this);
-                        $this.html($this.html().replace(/(<br>)|(<br \/>)|(<p>)|(<\/p>)/g, '\n'));
+        var cachePath = './uscentcom-cache/';
+        var cachedFilename = cachePath + slug(url);
+
+        // Try to read from file
+        try {
+            var result = JSON.parse(fs.readFileSync(cachedFilename, 'utf8'));
+            callback(result);
+        } catch (e) {
+            // If file does not yet exist, scrape web
+            if (e.code === 'ENOENT') {
+                scraperjs.StaticScraper
+                    .create(url)
+                    .scrape(function($) {
+                        // Convert p and br tags into newlines
+                        // http://stackoverflow.com/questions/3381331/jquery-convert-br-and-br-and-p-and-such-to-new-line
+                        $.fn.nl2br = function() {
+                            return this.each(function(i) {
+                                var $this = $(this);
+                                $this.html($this.html().replace(/(<br>)|(<br \/>)|(<p>)|(<\/p>)/g, '\n'));
+                            });
+                        };
+
+                        var lines = $('#interior table.contentpaneopen').eq(1)
+                                .nl2br().text().split('\n');
+
+                        // Trim, filter out empty lines
+                        return lines.map(function(d) {
+                            return d.trim();
+                        }).filter(function(d) {
+                            return d !== '';
+                        });
+
+                    }).then(function(result) {
+                        // Save result to disk, then call callback
+                        try {
+                            fs.mkdirSync(cachePath);
+                        } catch (innerE) {
+                            if (innerE.code !== 'EEXIST') {
+                                throw innerE;
+                            }
+                        }
+                        fs.writeFileSync(cachedFilename, JSON.stringify(result));
+                        return callback(result);
                     });
-                };
-
-                var lines = $('#interior table.contentpaneopen').eq(1).nl2br()
-                        .text().split('\n');
-
-                // Trim, filter out empty lines
-                return lines.map(function(d) {
-                    return d.trim();
-                }).filter(function(d) {
-                    return d !== '';
-                });
-
-            }).then(function(result) {
-                return callback(result);
-            });
+            } else {
+                throw e;
+            }
+        }
     };
 
     var fetchRelease = function(url, callback) {
