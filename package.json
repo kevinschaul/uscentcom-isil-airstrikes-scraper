@@ -9,11 +9,14 @@
   "author": "Kevin Schaul",
   "license": "MIT",
   "dependencies": {
-    "csv-stringify": "0.0.8",
     "node.extend": "^1.1.5",
     "nodeunit": "^0.9.1",
     "scraperjs": "^1.0.1",
     "slug": "^0.9.1",
     "slugify": "^0.1.1"
+  },
+  "devDependencies": {
+    "csv-stringify": "0.0.8",
+    "moment": "^2.10.6"
   }
 }

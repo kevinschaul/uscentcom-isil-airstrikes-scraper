@@ -55,6 +55,11 @@ module.exports = function() {
         });
     };
 
+    var scrapeReleaseFromDate = function(date, callback) {
+        var url = getURL(date);
+        scrapeRelease(url, callback);
+    };
+
     var fetchReleaseLines = function(url, callback) {
         var cachePath = './uscentcom-cache/';
         var cachedFilename = cachePath + slug(url);
@@ -195,6 +200,7 @@ module.exports = function() {
     return {
         getURL: getURL,
         scrapeRelease: scrapeRelease,
+        scrapeReleaseFromDate: scrapeReleaseFromDate,
         fetchRelease: fetchRelease,
         fetchReleaseLines: fetchReleaseLines,
         parseReleaseLines: parseReleaseLines,
