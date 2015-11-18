@@ -188,7 +188,7 @@ module.exports = function() {
     };
 
     var parseSingleStrikeDescriptions = function(line) {
-        var match = line.match(/^[\-\*\s]+?Near ([A-Za-z ']+?), ([a-z]+?) strike[s]? (.*)/);
+        var match = line.match(/^[\-\*\s]+?Near ([A-Za-z ']+?), ([a-z]+?) (.*)/);
 
         return {
             location: (match && match.length > 1) ? match[1] : false,

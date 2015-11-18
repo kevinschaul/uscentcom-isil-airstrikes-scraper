@@ -202,7 +202,7 @@ exports.isStrikeDescription = {
         var expected = {
             location: 'Al Hawl',
             number: 'one',
-            description: 'destroyed an ISIL vehicle borne improvised explosive device (VBIED).'
+            description: 'strike destroyed an ISIL vehicle borne improvised explosive device (VBIED).'
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -214,7 +214,7 @@ exports.isStrikeDescription = {
         var expected = {
             location: 'Al Hawl',
             number: 'two',
-            description: 'destroyed an ISIL vehicle borne improvised explosive device (VBIED).'
+            description: 'strikes destroyed an ISIL vehicle borne improvised explosive device (VBIED).'
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -226,7 +226,7 @@ exports.isStrikeDescription = {
         var expected = {
             location: 'Al Hasakah',
             number: 'two',
-            description: 'struck two separate ISIL tactical units and destroyed five ISIL fighting positions, an ISIL rocket, two ISIL vehicles, and wounded an ISIL fighter.'
+            description: 'strikes struck two separate ISIL tactical units and destroyed five ISIL fighting positions, an ISIL rocket, two ISIL vehicles, and wounded an ISIL fighter.'
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -238,7 +238,7 @@ exports.isStrikeDescription = {
         var expected = {
             location: 'Mar\'a',
             number: 'six',
-            description: 'struck five separate ISIL tactical units and destroyed three ISIL fighting positions, an ISIL ammo cache, an ISIL staging area, and three ISIL buildings.'
+            description: 'strikes struck five separate ISIL tactical units and destroyed three ISIL fighting positions, an ISIL ammo cache, an ISIL staging area, and three ISIL buildings.'
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -250,11 +250,23 @@ exports.isStrikeDescription = {
         var expected = {
             location: 'Al Hawl',
             number: 'one',
-            description: 'destroyed an ISIL vehicle borne improvised explosive device (VBIED).'
+            description: 'strike destroyed an ISIL vehicle borne improvised explosive device (VBIED).'
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
         test.deepEqual(expected, actual);
         test.done();
     },
+    airstrike: function(test) {
+        var line = '* Near Kobani, five airstrikes destroyed eight ISIL fighting positions.';
+        var expected = {
+            location: 'Kobani',
+            number: 'five',
+            description: 'airstrikes destroyed eight ISIL fighting positions.'
+        };
+
+        var actual = centcomScraper.parseSingleStrikeDescriptions(line);
+        test.deepEqual(expected, actual);
+        test.done();
+    }
 };
