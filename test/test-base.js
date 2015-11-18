@@ -2,6 +2,108 @@ var fs = require('fs');
 
 var centcomScraper = require('../src/index.js');
 
+exports.getURL = {
+    jan16: function(test) {
+        // year is 0-indexed
+        var date = new Date(2015, 0, 16);
+        var expected = 'http://www.centcom.mil/en/news/articles/jan.-16-military-airstrikes-continue-against-isil-in-syria-and-iraq';
+
+        var actual = centcomScraper.getURL(date);
+        test.equal(expected, actual);
+        test.done();
+    },
+    feb19: function(test) {
+        // year is 0-indexed
+        var date = new Date(2015, 1, 19);
+        var expected = 'http://www.centcom.mil/en/news/articles/feb.-19-military-airstrikes-continue-against-isil-in-syria-and-iraq';
+
+        var actual = centcomScraper.getURL(date);
+        test.equal(expected, actual);
+        test.done();
+    },
+    march26: function(test) {
+        // year is 0-indexed
+        var date = new Date(2015, 2, 26);
+        var expected = 'http://www.centcom.mil/en/news/articles/march-26-military-airstrikes-continue-against-isil-in-syria-and-iraq';
+
+        var actual = centcomScraper.getURL(date);
+        test.equal(expected, actual);
+        test.done();
+    },
+    april28: function(test) {
+        // year is 0-indexed
+        var date = new Date(2015, 3, 28);
+        var expected = 'http://www.centcom.mil/en/news/articles/april-28-military-airstrikes-continue-against-isil-in-syria-and-iraq';
+
+        var actual = centcomScraper.getURL(date);
+        test.equal(expected, actual);
+        test.done();
+    },
+    may9: function(test) {
+        // year is 0-indexed
+        var date = new Date(2015, 4, 9);
+        var expected = 'http://www.centcom.mil/en/news/articles/may-9-military-airstrikes-continue-against-isil-in-syria-and-iraq';
+
+        var actual = centcomScraper.getURL(date);
+        test.equal(expected, actual);
+        test.done();
+    },
+    may13: function(test) {
+        // year is 0-indexed
+        var date = new Date(2015, 4, 13);
+        var expected = 'http://www.centcom.mil/en/news/articles/may-13-military-airstrikes-continue-against-isil-terrorists-in-syria-and-ir';
+
+        var actual = centcomScraper.getURL(date);
+        test.equal(expected, actual);
+        test.done();
+    },
+    may29: function(test) {
+        // year is 0-indexed
+        var date = new Date(2015, 4, 29);
+        var expected = 'http://www.centcom.mil/en/news/articles/may-29-military-airstrikes-continue-against-isil-terrorists-in-syria-and-ir';
+
+        var actual = centcomScraper.getURL(date);
+        test.equal(expected, actual);
+        test.done();
+    },
+    july6: function(test) {
+        // year is 0-indexed
+        var date = new Date(2015, 6, 6);
+        var expected = 'http://www.centcom.mil/en/news/articles/july-6-military-airstrikes-continue-against-isil-terrorists-in-syria-and-ir';
+
+        var actual = centcomScraper.getURL(date);
+        test.equal(expected, actual);
+        test.done();
+    },
+    aug3: function(test) {
+        // year is 0-indexed
+        var date = new Date(2015, 7, 3);
+        var expected = 'http://www.centcom.mil/en/news/articles/august-3-military-airstrikes-continue-against-isil-terrorists-in-syria-and';
+
+        var actual = centcomScraper.getURL(date);
+        test.equal(expected, actual);
+        test.done();
+    },
+    sept1: function(test) {
+        // year is 0-indexed
+        var date = new Date(2015, 8, 1);
+        var expected = 'http://www.centcom.mil/en/news/articles/sept.-1-military-airstrikes-continue-against-isil-terrorists-in-syria-and-i';
+
+        var actual = centcomScraper.getURL(date);
+        test.equal(expected, actual);
+        test.done();
+    },
+    nov18: function(test) {
+        // year is 0-indexed
+        var date = new Date(2015, 10, 18);
+        var expected = 'http://www.centcom.mil/en/news/articles/nov.-18-military-airstrikes-continue-against-isil-terrorists-in-syria-and-i';
+
+        var actual = centcomScraper.getURL(date);
+        test.equal(expected, actual);
+        test.done();
+    }
+};
+
 exports.parseDate = {
     base: function(test) {
         var lines = [

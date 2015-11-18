@@ -4,6 +4,50 @@ var scraperjs = require('scraperjs');
 var slug = require('slug');
 
 module.exports = function() {
+    var getURL = function(date) {
+        // Hardcode date abbreviations
+        var monthMap = [
+            'jan.',
+            'feb.',
+            'march',
+            'april',
+            'may',
+            'june',
+            'july',
+            'august',
+            'sept.',
+            'oct.',
+            'nov.',
+            'dec.'
+        ];
+
+        var base = 'http://www.centcom.mil/en/news/articles/';
+
+        var month = date.getMonth();
+        var day = date.getDate();
+
+        // URL suffix sometimes includes "terrorists"
+        var suffix = '-military-airstrikes-continue-against-isil-terrorists-in-syria-and-iraq';
+        if (date <= new Date(2015, 4, 9)) {
+            suffix = '-military-airstrikes-continue-against-isil-in-syria-and-iraq';
+        }
+        var fullURL = base + monthMap[month] + '-' + day + suffix;
+
+        // URLs are trimmed to a certain number of chars
+        var length = 115;
+        if (date <= new Date(2015, 4, 9)) {
+            length = 108;
+        }
+        url = fullURL.slice(0, length);
+
+        // URLs ending in "-" have the hyphen removed
+        if (url[url.length - 1] == '-') {
+            url = url.slice(0, url.length - 1);
+        }
+
+        return url;
+    };
+
     var scrapeRelease = function(url, callback) {
         fetchReleaseLines(url, function(result) {
             var parsed = parseReleaseLines(result);
@@ -149,6 +193,7 @@ module.exports = function() {
     };
 
     return {
+        getURL: getURL,
         scrapeRelease: scrapeRelease,
         fetchRelease: fetchRelease,
         fetchReleaseLines: fetchReleaseLines,
