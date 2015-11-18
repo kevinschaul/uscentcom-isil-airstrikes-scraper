@@ -192,9 +192,31 @@ module.exports = function() {
 
         return {
             location: (match && match.length > 1) ? match[1] : false,
-            number: (match && match.length > 2) ? match[2] : false,
+            number: (match && match.length > 2) ? getNumber(match[2]) : false,
             description: (match && match.length > 3) ? match[3] : false
         };
+    };
+
+    var getNumber = function(string) {
+        var lookup = {
+            'an': 1,
+            'one': 1,
+            'two': 2,
+            'three': 3,
+            'four': 4,
+            'five': 5,
+            'six': 6,
+            'seven': 7,
+            'eight': 8,
+            'nine': 9,
+            'ten': 10,
+            'eleven': 11,
+            'twelve': 12,
+            'thirteen': 13,
+            'fourteen': 14,
+            'fifteen': 15
+        };
+        return lookup[string] || string;
     };
 
     return {
@@ -209,6 +231,7 @@ module.exports = function() {
         isCountryHeader: isCountryHeader,
         parseStrikeDescriptions: parseStrikeDescriptions,
         isStrikeDescription: isStrikeDescription,
-        parseSingleStrikeDescriptions: parseSingleStrikeDescriptions
+        parseSingleStrikeDescriptions: parseSingleStrikeDescriptions,
+        getNumber: getNumber
     };
 }();
