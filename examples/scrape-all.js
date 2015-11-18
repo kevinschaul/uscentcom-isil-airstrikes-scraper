@@ -4,7 +4,7 @@ var moment = require('moment');
 var centcomScraper = require('../src/index.js');
 
 var columns = [
-    'date',
+    'dateFormatted',
     'releaseNumber',
     'country',
     'location',
@@ -25,6 +25,6 @@ var startDate = moment('2014-12-18');
 var endDate = moment();
 
 while (startDate <= endDate) {
-    centcomScraper.scrapeReleaseFromDate(startDate.toDate(), callback);
+    centcomScraper.scrapeReleaseFromDate(startDate.toDate(), callback, {dateFormatted: startDate.format('MM-DD-YYYY')});
     startDate.add(1, 'd');
 }

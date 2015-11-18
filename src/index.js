@@ -4,7 +4,7 @@ var scraperjs = require('scraperjs');
 var slug = require('slug');
 
 module.exports = function() {
-    var getURL = function(date) {
+    var URLFromDate = function(date) {
         // Hardcode date abbreviations
         var monthMap = [
             'jan.',
@@ -48,16 +48,16 @@ module.exports = function() {
         return url;
     };
 
-    var scrapeRelease = function(url, callback) {
+    var scrapeRelease = function(url, callback, opts) {
         fetchReleaseLines(url, function(result) {
-            var parsed = parseReleaseLines(result, url);
+            var parsed = parseReleaseLines(result, url, opts);
             callback(parsed);
         });
     };
 
-    var scrapeReleaseFromDate = function(date, callback) {
-        var url = getURL(date);
-        scrapeRelease(url, callback);
+    var scrapeReleaseFromDate = function(date, callback, opts) {
+        var url = URLFromDate(date);
+        scrapeRelease(url, callback, opts);
     };
 
     var fetchReleaseLines = function(url, callback) {
@@ -122,7 +122,7 @@ module.exports = function() {
         });
     };
 
-    var parseReleaseLines = function(lines, url) {
+    var parseReleaseLines = function(lines, url, opts) {
         var strikes = [];
 
         var date = parseDate(lines);
@@ -137,7 +137,11 @@ module.exports = function() {
                     country: country,
                     url: url
                 };
-                var strike = _.extend(partialStrike, d);
+                var strike;
+                if (opts) {
+                    strike = _.extend(partialStrike, opts);
+                }
+                strike = _.extend(partialStrike, d);
                 strikes.push(strike);
             });
         });
@@ -226,7 +230,7 @@ module.exports = function() {
     };
 
     return {
-        getURL: getURL,
+        URLFromDate: URLFromDate,
         scrapeRelease: scrapeRelease,
         scrapeReleaseFromDate: scrapeReleaseFromDate,
         fetchRelease: fetchRelease,
