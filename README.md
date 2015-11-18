@@ -23,3 +23,11 @@ A scraper for [press releases about Operation Inherent Resolve](http://www.centc
     July 6:
     -- Near Al Hasakah, five airstrikes struck four ISIL tactical units, destroying an ISIL tank, six ISIL vehicles, an ISIL building, an ISIL staging position and an ISIL fighting position.
 
+## Corrections
+
+Some press releases may include corrections (e.g. [nov 18](http://www.centcom.mil/en/news/articles/nov.-18-military-airstrikes-continue-against-isil-terrorists-in-syria-and-i)):
+
+    The strike release published on Nov. 16 includes a French strike listed as "Near Ar Raqqah, one strike struck an ISIL storage depot." After further coordination with the French Ministry of Defense, we have determined that France conducted two separate strikes on two different targets. The first target was an ISIL storage depot and the second strike against an ISIL command and control node.
+
+**The scraper does not currently make these corrections.**
+
