@@ -9,6 +9,7 @@ var columns = [
     'country',
     'location',
     'number',
+    'url',
     'description'
 ];
 // Write header row

@@ -50,7 +50,7 @@ module.exports = function() {
 
     var scrapeRelease = function(url, callback) {
         fetchReleaseLines(url, function(result) {
-            var parsed = parseReleaseLines(result);
+            var parsed = parseReleaseLines(result, url);
             callback(parsed);
         });
     };
@@ -76,15 +76,20 @@ module.exports = function() {
                     .scrape(function($) {
                         // Convert p and br tags into newlines
                         // http://stackoverflow.com/questions/3381331/jquery-convert-br-and-br-and-p-and-such-to-new-line
-                        $.fn.nl2br = function() {
+                        $.fn.br2nl = function() {
                             return this.each(function(i) {
                                 var $this = $(this);
+
+                                // Strip existing newlines
+                                $this.html($this.html().replace(/[\r|\n]/mg, ' '));
+
+                                // Convert tags to newlines
                                 $this.html($this.html().replace(/(<br>)|(<br \/>)|(<p>)|(<\/p>)/g, '\n'));
                             });
                         };
 
                         var lines = $('#interior table.contentpaneopen').eq(1)
-                                .nl2br().text().split('\n');
+                                .br2nl().text().split('\n');
 
                         // Trim, filter out empty lines
                         return lines.map(function(d) {
@@ -117,7 +122,7 @@ module.exports = function() {
         });
     };
 
-    var parseReleaseLines = function(lines) {
+    var parseReleaseLines = function(lines, url) {
         var strikes = [];
 
         var date = parseDate(lines);
@@ -129,7 +134,8 @@ module.exports = function() {
                 var partialStrike = {
                     date: date,
                     releaseNumber: releaseNumber,
-                    country: country
+                    country: country,
+                    url: url
                 };
                 var strike = _.extend(partialStrike, d);
                 strikes.push(strike);
@@ -142,7 +148,7 @@ module.exports = function() {
     var parseDate = function(lines) {
         var i;
         for (i = 0; i < lines.length; i++) {
-            var match = lines[i].match(/(\w+ [0-9]{2}, [0-9]{4})/);
+            var match = lines[i].match(/(\w+ [0-9]{1,2}, [0-9]{4})/);
             if (match) {
                 return match[1];
             }
@@ -188,7 +194,7 @@ module.exports = function() {
     };
 
     var parseSingleStrikeDescriptions = function(line) {
-        var match = line.match(/^[\-\*\s]+?Near ([A-Za-z ']+?), ([a-z]+?) (.*)/);
+        var match = line.match(/^[\-\*\s]+?Near ([A-Za-z ']+?)\*?,? ([0-9]+|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen?) (.+)/);
 
         return {
             location: (match && match.length > 1) ? match[1] : false,
