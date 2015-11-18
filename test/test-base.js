@@ -184,41 +184,6 @@ exports.isCountryHeader = {
     }
 };
 
-exports.isStrikeDescription = {
-    base: function(test) {
-        var line = ' Near Ar Raqqah, an airstrike struck an ISIL military garrison.';
-        var expected = true;
-
-        var actual = centcomScraper.isStrikeDescription(line);
-        test.equal(expected, actual);
-        test.done();
-    },
-    asterisk: function(test) {
-        var line = '*  Near Al Hawl, one strike destroyed an ISIL vehicle borne improvised explosive device (VBIED).';
-        var expected = true;
-
-        var actual = centcomScraper.isStrikeDescription(line);
-        test.equal(expected, actual);
-        test.done();
-    },
-    hyphens: function(test) {
-        var line = '-- Near Al Hasakah, five airstrikes struck four ISIL tactical units, destroying an ISIL tank, six ISIL vehicles, an ISIL building, an ISIL staging position and an ISIL fighting position.';
-        var expected = true;
-
-        var actual = centcomScraper.isStrikeDescription(line);
-        test.equal(expected, actual);
-        test.done();
-    },
-    not: function(test) {
-        var line = 'Syria';
-        var expected = false;
-
-        var actual = centcomScraper.isStrikeDescription(line);
-        test.equal(expected, actual);
-        test.done();
-    }
-};
-
 exports.parseSingletrikeDescriptions = {
     base: function(test) {
         var line = '*  Near Al Hawl, one strike destroyed an ISIL vehicle borne improvised explosive device (VBIED).';
@@ -358,6 +323,18 @@ exports.parseSingletrikeDescriptions = {
             location: 'Al Asad',
             number: 3,
             description: 'airstrikes struck two ISIL tactical units, a large ISIL unit, and an ISIL vehicle, and destroyed an ISIL IED and two ISIL vehicles.'
+        };
+
+        var actual = centcomScraper.parseSingleStrikeDescriptions(line);
+        test.deepEqual(expected, actual);
+        test.done();
+    },
+    may13AlHasakah: function(test) {
+        var line = 'Near Al Hasakah, three airstrikes struck two ISIL tactical units and an ISIL trench system, destroying six ISIL fighting positions, two ISIL vehicles and an ISIL tank.';
+        var expected = {
+            location: 'Al Hasakah',
+            number: 3,
+            description: 'airstrikes struck two ISIL tactical units and an ISIL trench system, destroying six ISIL fighting positions, two ISIL vehicles and an ISIL tank.'
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);

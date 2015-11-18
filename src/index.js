@@ -180,27 +180,27 @@ module.exports = function() {
             if (isCountryHeader(lines[i])) {
                 currentCountry = lines[i];
                 strikeDescriptions[currentCountry] = [];
-            } else if (isStrikeDescription(lines[i])) {
-                strikeDescriptions[currentCountry].push(
-                        parseSingleStrikeDescriptions(lines[i]));
+            } else {
+                var strikeDescription = parseSingleStrikeDescriptions(lines[i]);
+                if (strikeDescription) {
+                    strikeDescriptions[currentCountry].push(strikeDescription);
+                }
             }
         }
 
         return strikeDescriptions;
     };
 
-    var isStrikeDescription = function(line) {
-        return !!line.match(/^[\-\*\s]+?Near /);
-    };
-
     var parseSingleStrikeDescriptions = function(line) {
-        var match = line.match(/^[\-\*\s]+?Near ([A-Za-z ']+?)\*?,? ([0-9]+|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen?) (.+)/);
+        var match = line.match(/^[\-\*\s]*?Near ([A-Za-z ']+?)\*?,? ([0-9]+|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen?) (.+)/);
 
-        return {
-            location: (match && match.length > 1) ? match[1] : false,
-            number: (match && match.length > 2) ? getNumber(match[2]) : false,
-            description: (match && match.length > 3) ? match[3] : false
-        };
+        if (match) {
+            return {
+                location: (match && match.length > 1) ? match[1] : false,
+                number: (match && match.length > 2) ? getNumber(match[2]) : false,
+                description: (match && match.length > 3) ? match[3] : false
+            };
+        }
     };
 
     var getNumber = function(string) {
@@ -236,7 +236,6 @@ module.exports = function() {
         parseReleaseNumber: parseReleaseNumber,
         isCountryHeader: isCountryHeader,
         parseStrikeDescriptions: parseStrikeDescriptions,
-        isStrikeDescription: isStrikeDescription,
         parseSingleStrikeDescriptions: parseSingleStrikeDescriptions,
         getNumber: getNumber
     };

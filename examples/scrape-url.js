@@ -12,8 +12,20 @@ if (process.argv.length != 3) {
 
 var url = process.argv[2];
 
+var columns = [
+    'date',
+    'releaseNumber',
+    'country',
+    'location',
+    'number',
+    'url',
+    'description'
+];
+// Write header row
+process.stdout.write(columns.join(',') + '\n');
+
 var callback = function(results) {
-    csvStringify(results, {header: true}, function(err, output) {
+    csvStringify(results, {columns: columns}, function(err, output) {
             process.stdout.write(output);
         }
     );
