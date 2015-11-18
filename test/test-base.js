@@ -84,6 +84,15 @@ exports.URLFromDate = {
         test.equal(expected, actual);
         test.done();
     },
+    aug11: function(test) {
+        // year is 0-indexed
+        var date = new Date(2015, 7, 11);
+        var expected = 'http://www.centcom.mil/en/news/articles/aug.-11-military-airstrikes-continue-against-isil-terrorists-in-syria-and-i';
+
+        var actual = centcomScraper.URLFromDate(date);
+        test.equal(expected, actual);
+        test.done();
+    },
     sept1: function(test) {
         // year is 0-indexed
         var date = new Date(2015, 8, 1);
@@ -335,6 +344,18 @@ exports.parseSingletrikeDescriptions = {
             location: 'Al Hasakah',
             number: 3,
             description: 'airstrikes struck two ISIL tactical units and an ISIL trench system, destroying six ISIL fighting positions, two ISIL vehicles and an ISIL tank.'
+        };
+
+        var actual = centcomScraper.parseSingleStrikeDescriptions(line);
+        test.deepEqual(expected, actual);
+        test.done();
+    },
+    sept15AlHasakah: function(test) {
+        var line = '• Near Al Hasakah, two airstrikes struck an ISIL tactical unit and destroyed an ISIL armored personnel carrier.';
+        var expected = {
+            location: 'Al Hasakah',
+            number: 2,
+            description: 'airstrikes struck an ISIL tactical unit and destroyed an ISIL armored personnel carrier.'
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
