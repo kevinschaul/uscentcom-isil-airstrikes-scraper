@@ -184,11 +184,11 @@ module.exports = function() {
     };
 
     var isStrikeDescription = function(line) {
-        return !!line.match(/^\*[\s]+?Near /);
+        return !!line.match(/^[\-\*\s]+?Near /);
     };
 
     var parseSingleStrikeDescriptions = function(line) {
-        var match = line.match(/^\*[\s]+?Near ([A-Za-z ']+?), ([a-z]+?) strike[s]? (.*)/);
+        var match = line.match(/^[\-\*\s]+?Near ([A-Za-z ']+?), ([a-z]+?) strike[s]? (.*)/);
 
         return {
             location: (match && match.length > 1) ? match[1] : false,

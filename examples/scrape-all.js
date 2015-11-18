@@ -21,7 +21,6 @@ var callback = function(results) {
 };
 
 var startDate = moment('2014-12-18');
-//var startDate = moment('2015-11-17');
 var endDate = moment();
 
 while (startDate <= endDate) {

@@ -163,7 +163,23 @@ exports.isCountryHeader = {
 
 exports.isStrikeDescription = {
     base: function(test) {
+        var line = ' Near Ar Raqqah, an airstrike struck an ISIL military garrison.';
+        var expected = true;
+
+        var actual = centcomScraper.isStrikeDescription(line);
+        test.equal(expected, actual);
+        test.done();
+    },
+    asterisk: function(test) {
         var line = '*  Near Al Hawl, one strike destroyed an ISIL vehicle borne improvised explosive device (VBIED).';
+        var expected = true;
+
+        var actual = centcomScraper.isStrikeDescription(line);
+        test.equal(expected, actual);
+        test.done();
+    },
+    hyphens: function(test) {
+        var line = '-- Near Al Hasakah, five airstrikes struck four ISIL tactical units, destroying an ISIL tank, six ISIL vehicles, an ISIL building, an ISIL staging position and an ISIL fighting position.';
         var expected = true;
 
         var actual = centcomScraper.isStrikeDescription(line);
@@ -228,5 +244,17 @@ exports.isStrikeDescription = {
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
         test.deepEqual(expected, actual);
         test.done();
-    }
+    },
+    hyphens: function(test) {
+        var line = '--  Near Al Hawl, one strike destroyed an ISIL vehicle borne improvised explosive device (VBIED).';
+        var expected = {
+            location: 'Al Hawl',
+            number: 'one',
+            description: 'destroyed an ISIL vehicle borne improvised explosive device (VBIED).'
+        };
+
+        var actual = centcomScraper.parseSingleStrikeDescriptions(line);
+        test.deepEqual(expected, actual);
+        test.done();
+    },
 };
