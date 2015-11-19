@@ -1,17 +1,9 @@
 var csvStringify = require('csv-stringify');
 var scrapeCache = require('scrape-cache');
 
-var centcomScraper = require('../src/index.js');
-
 var columns = [
-    'date',
-    'releaseNumber',
-    'country',
-    'location',
-    'number',
     'title',
-    'url',
-    'description'
+    'url'
 ];
 // Write header row
 process.stdout.write(columns.join(',') + '\n');
@@ -41,35 +33,32 @@ var scraper = function($) {
     }).get();
 };
 
+var saveMatches = function(result) {
+    var filtered = result.filter(function(link) {
+        var match = link.title.match(/strikes.+continue.+ISIL.+/i);
+        return match;
+    });
+    callback(filtered);
+};
+
 // Cycle through these pages, collecting the relevant links
 //
 // `oldestNWeCareAbout` should be set to the number where Dec. 18 starts. This
 // will change as more press releases happen.
 //var oldestNWeCareAbout = 599;
+
+var interval;
+var n = 0;
 var oldestNWeCareAbout = 599;
+var tick = function() {
+    if (n > oldestNWeCareAbout) {
+        clearInterval(interval);
+    }
 
-var strikeURLs = {};
+    var url = 'http://www.centcom.mil/en/news/P' + n;
+    scrapeCache.scrape(url, scraper, saveMatches);
 
-var scrapeMatches = function(result) {
-    result.forEach(function(link) {
-        var match = link.title.match(/strikes.+continue.+ISIL.+/);
-        if (match) {
-            strikeURLs[link.title] = link.url;
-            centcomScraper.scrapeRelease(link.url, callback, link);
-        }
-    });
+    n += 5;
 };
 
-var n;
-for (n = 0; n <= oldestNWeCareAbout; n += 5) {
-    var url = 'http://www.centcom.mil/en/news/P' + n;
-    scrapeCache.scrape(url, scraper, scrapeMatches);
-}
-
-//var startDate = moment('2014-12-18');
-//var endDate = moment();
-
-//while (startDate <= endDate) {
-    //centcomScraper.scrapeReleaseFromDate(startDate.toDate(), callback, {dateFormatted: startDate.format('MM-DD-YYYY')});
-    //startDate.add(1, 'd');
-//}
+interval = setInterval(tick, 10);
