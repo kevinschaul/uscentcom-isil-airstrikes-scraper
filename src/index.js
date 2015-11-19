@@ -1,5 +1,6 @@
 var _ = require('underscore');
 var fs = require('fs');
+var moment = require('moment');
 var scrapeCache = require('scrape-cache');
 
 module.exports = function() {
@@ -50,6 +51,9 @@ module.exports = function() {
         var strikes = [];
 
         var date = parseDate(lines);
+        if (!date) {
+            date = getDateFromURL(url);
+        }
         var releaseNumber = parseReleaseNumber(lines);
 
         var strikeDescriptions = parseStrikeDescriptions(lines);
@@ -71,6 +75,32 @@ module.exports = function() {
         });
 
         return strikes;
+    };
+
+    // NOTE: This supports a very limited set of dates. See test/test-base.js
+    var getDateFromURL = function(url) {
+        var monthLookup = {
+            'oct.': 10,
+            'nov.': 11,
+            'sept.': 9,
+            'july': 7,
+            'march': 3
+        };
+        var splitSlash = url.split('/');
+        var end = splitSlash[splitSlash.length - 1];
+        var splitHyphen = end.split('-');
+        var month = splitHyphen[0];
+        if (month.length === 1) {
+            month = '0' + month;
+        }
+        var day = splitHyphen[1];
+        if (day.length === 1) {
+            day = '0' + day;
+        }
+        var year = 2015;
+        var dateString = year + ' ' + monthLookup[month] + ' ' + day;
+        var date = moment(dateString, 'YYYY MM DD');
+        return date.format('MMMM D, YYYY');
     };
 
     var parseDate = function(lines) {
@@ -159,6 +189,7 @@ module.exports = function() {
         fetchRelease: fetchRelease,
         fetchReleaseLines: fetchReleaseLines,
         parseReleaseLines: parseReleaseLines,
+        getDateFromURL: getDateFromURL,
         parseDate: parseDate,
         parseReleaseNumber: parseReleaseNumber,
         isCountryHeader: isCountryHeader,

@@ -6,7 +6,7 @@ A scraper for [press releases about Operation Inherent Resolve](http://www.centc
 
 ## Dates supported by scraper
 
-This scraper handles press releases since [Dec. 18](http://www.centcom.mil/en/news/articles/dec.-18-military-airstrikes-continue-against-isil-in-syria-and-iraq).
+This scraper handles press releases since [Dec. 19](http://www.centcom.mil/en/news/articles/dec.-19-military-airstrikes-continue-against-isil-in-syria-and-iraq).
 Before this date, air strike press releases followed very different
 formats.
 
@@ -22,13 +22,7 @@ Some press releases may include corrections (e.g. [nov 18](http://www.centcom.mi
 
 ## Structure changes over time
 
-* **XX date** URL structure changes slightly (adds word "terrorists",
-  becomes truncated):
-    New: http://www.centcom.mil/en/news/articles/nov.-17-military-airstrikes-continue-against-isil-terrorists-in-syria-and-i
-
-    Old: http://www.centcom.mil/en/news/articles/feb.-28-military-airstrikes-continue-against-isil-in-syria-and-iraq
-
-* **XX date** Airstrike description lines change format
+* Description lines change format a lot. A sampling:
 
     Feb. 19:
     * Near Al Hasakah, two airstrikes struck multiple ISIL oil pump jacks and destroyed an ISIL checkpoint.

@@ -2,6 +2,41 @@ var fs = require('fs');
 
 var centcomScraper = require('../src/index.js');
 
+exports.getDateFromURL = {
+    oct: function(test) {
+        var url = 'http://www.centcom.mil/en/news/articles/oct.-7-military-airstrikes-continue-against-isil-terrorists-in-syria-and-ir';
+        var expected = 'October 7, 2015';
+
+        var actual = centcomScraper.getDateFromURL(url);
+        test.equal(expected, actual);
+        test.done();
+    },
+    sept: function(test) {
+        var url = 'http://www.centcom.mil/en/news/articles/sept.-18-military-airstrikes-continue-against-isil-terrorists-in-syria-iraq';
+        var expected = 'September 18, 2015';
+
+        var actual = centcomScraper.getDateFromURL(url);
+        test.equal(expected, actual);
+        test.done();
+    },
+    july: function(test) {
+        var url = 'http://www.centcom.mil/en/news/articles/july-1-military-airstrikes-continue-against-isil-terrorists-in-syria-and-ir';
+        var expected = 'July 1, 2015';
+
+        var actual = centcomScraper.getDateFromURL(url);
+        test.equal(expected, actual);
+        test.done();
+    },
+    march: function(test) {
+        var url = 'http://www.centcom.mil/en/news/articles/march-4-military-airstrikes-continue-against-isil-in-syria-and-iraq';
+        var expected = 'March 4, 2015';
+
+        var actual = centcomScraper.getDateFromURL(url);
+        test.equal(expected, actual);
+        test.done();
+    }
+};
+
 exports.parseDate = {
     base: function(test) {
         var lines = [
