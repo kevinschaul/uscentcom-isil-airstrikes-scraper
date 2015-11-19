@@ -1,7 +1,6 @@
 var _ = require('underscore');
 var fs = require('fs');
-var scraperjs = require('scraperjs');
-var slug = require('slug');
+var scrapeCache = require('scrape-cache');
 
 module.exports = function() {
     var URLFromDate = function(date) {
@@ -56,64 +55,41 @@ module.exports = function() {
     };
 
     var scrapeReleaseFromDate = function(date, callback, opts) {
-        var url = URLFromDate(date);
-        scrapeRelease(url, callback, opts);
+        var urls = URLsFromDate(date);
+
+        urls.forEach(function(url) {
+            scrapeRelease(url, callback, opts);
+        });
     };
 
     var fetchReleaseLines = function(url, callback) {
-        var cachePath = './uscentcom-cache/';
-        var cachedFilename = cachePath + slug(url);
+        var scraper = function($) {
+            // Convert p and br tags into newlines
+            // http://stackoverflow.com/questions/3381331/jquery-convert-br-and-br-and-p-and-such-to-new-line
+            $.fn.br2nl = function() {
+                return this.each(function(i) {
+                    var $this = $(this);
 
-        // Try to read from file
-        try {
-            var result = JSON.parse(fs.readFileSync(cachedFilename, 'utf8'));
-            callback(result);
-        } catch (e) {
-            // If file does not yet exist, scrape web
-            if (e.code === 'ENOENT') {
-                scraperjs.StaticScraper
-                    .create(url)
-                    .scrape(function($) {
-                        // Convert p and br tags into newlines
-                        // http://stackoverflow.com/questions/3381331/jquery-convert-br-and-br-and-p-and-such-to-new-line
-                        $.fn.br2nl = function() {
-                            return this.each(function(i) {
-                                var $this = $(this);
+                    // Strip existing newlines
+                    $this.html($this.html().replace(/[\r|\n]/mg, ' '));
 
-                                // Strip existing newlines
-                                $this.html($this.html().replace(/[\r|\n]/mg, ' '));
+                    // Convert tags to newlines
+                    $this.html($this.html().replace(/(<br>)|(<br \/>)|(<p>)|(<\/p>)/g, '\n'));
+                });
+            };
 
-                                // Convert tags to newlines
-                                $this.html($this.html().replace(/(<br>)|(<br \/>)|(<p>)|(<\/p>)/g, '\n'));
-                            });
-                        };
+            var lines = $('#interior table.contentpaneopen').eq(1)
+                    .br2nl().text().split('\n');
 
-                        var lines = $('#interior table.contentpaneopen').eq(1)
-                                .br2nl().text().split('\n');
+            // Trim, filter out empty lines
+            return result = lines.map(function(d) {
+                return d.trim();
+            }).filter(function(d) {
+                return d !== '';
+            });
+        };
 
-                        // Trim, filter out empty lines
-                        return lines.map(function(d) {
-                            return d.trim();
-                        }).filter(function(d) {
-                            return d !== '';
-                        });
-
-                    }).then(function(result) {
-                        // Save result to disk, then call callback
-                        try {
-                            fs.mkdirSync(cachePath);
-                        } catch (innerE) {
-                            if (innerE.code !== 'EEXIST') {
-                                throw innerE;
-                            }
-                        }
-                        fs.writeFileSync(cachedFilename, JSON.stringify(result));
-                        return callback(result);
-                    });
-            } else {
-                throw e;
-            }
-        }
+        scrapeCache.scrape(url, scraper, callback);
     };
 
     var fetchRelease = function(url, callback) {
