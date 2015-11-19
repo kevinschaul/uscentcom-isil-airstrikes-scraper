@@ -95,7 +95,8 @@ module.exports = function() {
 
     var isCountryHeader = function(line) {
         // TODO This will fail for other countries
-        return line === 'Syria' || line === 'Iraq';
+        var match = line.match(/^[\s]*(Syria|Iraq)[\s]*$/);
+        return !!match;
     };
 
     var parseStrikeDescriptions = function(lines) {

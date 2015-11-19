@@ -64,6 +64,14 @@ exports.isCountryHeader = {
         test.equal(expected, actual);
         test.done();
     },
+    spaces: function(test) {
+        var line = '    Syria';
+        var expected = true;
+
+        var actual = centcomScraper.isCountryHeader(line);
+        test.equal(expected, actual);
+        test.done();
+    },
     notShare: function(test) {
         var line = 'Share';
         var expected = false;
