@@ -74,7 +74,7 @@ module.exports = function() {
                     $this.html($this.html().replace(/[\r|\n]/mg, ' '));
 
                     // Convert tags to newlines
-                    $this.html($this.html().replace(/(<br>)|(<br \/>)|(<p>)|(<\/p>)/g, '\n'));
+                    $this.html($this.html().replace(/(<br>)|(<br \/>)|(<p>)|(<\/p>)(<ul>)|(<\/ul>)(<li>)|(<\/li>)/g, '\n'));
                 });
             };
 

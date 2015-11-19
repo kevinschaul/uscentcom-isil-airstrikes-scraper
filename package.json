@@ -13,8 +13,9 @@
     "underscore": "^1.8.3"
   },
   "devDependencies": {
-    "nodeunit": "^0.9.1",
+    "csv-parse": "^1.0.0",
     "csv-stringify": "0.0.8",
-    "moment": "^2.10.6"
+    "moment": "^2.10.6",
+    "nodeunit": "^0.9.1"
   }
 }
