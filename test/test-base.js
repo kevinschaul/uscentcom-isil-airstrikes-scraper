@@ -361,5 +361,17 @@ exports.parseSingletrikeDescriptions = {
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
         test.deepEqual(expected, actual);
         test.done();
+    },
+    april9AlHasakah: function(test) {
+        var line = 'o Near Al Hasakah, four airstrikes struck an ISIL tactical unit, two ISIL vehicles and destroyed five ISIL vehicles and an ISIL tank.';
+        var expected = {
+            location: 'Al Hasakah',
+            number: 4,
+            description: 'airstrikes struck an ISIL tactical unit, two ISIL vehicles and destroyed five ISIL vehicles and an ISIL tank.'
+        };
+
+        var actual = centcomScraper.parseSingleStrikeDescriptions(line);
+        test.deepEqual(expected, actual);
+        test.done();
     }
 };

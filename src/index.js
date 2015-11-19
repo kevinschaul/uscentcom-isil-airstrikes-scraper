@@ -172,7 +172,7 @@ module.exports = function() {
     };
 
     var parseSingleStrikeDescriptions = function(line) {
-        var match = line.match(/^[\-\*\s•]*?Near ([A-Za-z ']+?)\*?,? ([0-9]+|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen?) (.+)/);
+        var match = line.match(/^[\-\*\s•\o]*?Near ([A-Za-z ']+?)\*?,? ([0-9]+|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen?) (.+)/);
 
         if (match) {
             return {
