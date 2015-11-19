@@ -22,7 +22,7 @@ module.exports = function() {
                     $this.html($this.html().replace(/[\r|\n]/mg, ' '));
 
                     // Convert tags to newlines
-                    $this.html($this.html().replace(/(<br>)|(<br \/>)|(<p>)|(<\/p>)(<ul>)|(<\/ul>)(<li>)|(<\/li>)/g, '\n'));
+                    $this.html($this.html().replace(/(<br>)|(<br \/>)|(<p>)|(<\/p>)|(<ul>)|(<\/ul>)|(<li>)|(<\/li>)/g, '\n'));
                 });
             };
 
@@ -107,8 +107,8 @@ module.exports = function() {
         var i;
         for (i = 0; i < lines.length; i++) {
             if (isCountryHeader(lines[i])) {
-                currentCountry = lines[i];
-                strikeDescriptions[currentCountry] = [];
+                currentCountry = lines[i].trim();
+                strikeDescriptions[currentCountry] = strikeDescriptions[currentCountry] || [];
             } else {
                 var strikeDescription = parseSingleStrikeDescriptions(lines[i]);
                 if (strikeDescription) {
