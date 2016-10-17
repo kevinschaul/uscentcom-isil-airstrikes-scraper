@@ -23,19 +23,31 @@ module.exports = function() {
                     $this.html($this.html().replace(/[\r|\n]/mg, ' '));
 
                     // Convert tags to newlines
-                    $this.html($this.html().replace(/(<br>)|(<br \/>)|(<p>)|(<\/p>)|(<ul>)|(<\/ul>)|(<li>)|(<\/li>)/g, '\n'));
+                    $this.html($this.html().replace(/(<br[^>]*>)|(<br \/>)|(<p>)|(<\/p>)|(<ul>)|(<\/ul>)|(<li>)|(<\/li>)/g, '\n'));
                 });
             };
 
-            var lines = $('#interior table.contentpaneopen').eq(1)
+            var lines = $('.newsrelease').eq(0)
                     .br2nl().text().split('\n');
 
+            var dateLines = $('.date').eq(0).br2nl().text().split('\n');
+
             // Trim, filter out empty lines
-            return result = lines.map(function(d) {
+            var formattedLines = lines.map(function(d) {
                 return d.trim();
             }).filter(function(d) {
                 return d !== '';
             });
+            var formattedDateLines = dateLines.map(function(d) {
+                return d.trim();
+            }).filter(function(d) {
+                return d !== '';
+            });
+
+            return {
+                formattedLines: formattedLines,
+                formattedDateLines: formattedDateLines
+            };
         };
 
         scrapeCache.scrape(url, scraper, callback);
@@ -47,16 +59,13 @@ module.exports = function() {
         });
     };
 
-    var parseReleaseLines = function(lines, url, opts) {
+    var parseReleaseLines = function(results, url, opts) {
         var strikes = [];
 
-        var date = parseDate(lines);
-        if (!date) {
-            date = getDateFromURL(url);
-        }
-        var releaseNumber = parseReleaseNumber(lines);
+        var date = parseDate(results.formattedDateLines);
+        var releaseNumber = parseReleaseNumber(results.formattedDateLines);
 
-        var strikeDescriptions = parseStrikeDescriptions(lines);
+        var strikeDescriptions = parseStrikeDescriptions(results.formattedLines);
         _.each(strikeDescriptions, function(strikesInCountry, country) {
             strikesInCountry.forEach(function(d) {
                 var partialStrike = {
@@ -77,36 +86,10 @@ module.exports = function() {
         return strikes;
     };
 
-    // NOTE: This supports a very limited set of dates. See test/test-base.js
-    var getDateFromURL = function(url) {
-        var monthLookup = {
-            'oct.': 10,
-            'nov.': 11,
-            'sept.': 9,
-            'july': 7,
-            'march': 3
-        };
-        var splitSlash = url.split('/');
-        var end = splitSlash[splitSlash.length - 1];
-        var splitHyphen = end.split('-');
-        var month = splitHyphen[0];
-        if (month.length === 1) {
-            month = '0' + month;
-        }
-        var day = splitHyphen[1];
-        if (day.length === 1) {
-            day = '0' + day;
-        }
-        var year = 2015;
-        var dateString = year + ' ' + monthLookup[month] + ' ' + day;
-        var date = moment(dateString, 'YYYY MM DD');
-        return date.format('MMMM D, YYYY');
-    };
-
     var parseDate = function(lines) {
         var i;
         for (i = 0; i < lines.length; i++) {
-            var match = lines[i].match(/(\w+ [0-9]{1,2}, [0-9]{4})/);
+            var match = lines[i].match(/([\w\.]+ [0-9]{1,2}, [0-9]{4})/);
             if (match) {
                 return match[1];
             }
@@ -116,7 +99,7 @@ module.exports = function() {
     var parseReleaseNumber = function(lines) {
         var i;
         for (i = 0; i < lines.length; i++) {
-            var match = lines[i].match(/Release # ([0-9\-]+)/);
+            var match = lines[i].match(/Release No: ([0-9\-]+)/);
             if (match) {
                 return match[1];
             }
@@ -151,7 +134,7 @@ module.exports = function() {
     };
 
     var parseSingleStrikeDescriptions = function(line) {
-        var match = line.match(/^[\-\*\s•\o]*?Near ([A-Za-z ']+?)\*?,? ([0-9]+|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen?) (.+)/);
+        var match = line.match(/^[\-\*\s•\o]*?Near ([A-Za-z '’]+?)\*?,? ([0-9]+|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen?) (.+)/);
 
         if (match) {
             return {
