@@ -20,7 +20,7 @@ module.exports = function() {
             _.each(strikeDescriptions, function(strikesInCountry, country) {
                 strikesInCountry.forEach(function(d) {
                     var partialStrike = {
-                        date: result.date,
+                        date: parseDate(result.date),
                         title: result.title,
                         country: country
                     };
@@ -33,13 +33,12 @@ module.exports = function() {
         return strikes;
     };
 
-    var parseDate = function(lines) {
-        var i;
-        for (i = 0; i < lines.length; i++) {
-            var match = lines[i].match(/([\w\.]+ [0-9]{1,2}, [0-9]{4})/);
-            if (match) {
-                return match[1];
-            }
+    var parseDate = function(date) {
+        var parsed = moment(date, 'MMMM D, YYYY');
+        if (parsed.isValid()) {
+            return parsed.format('MM/DD/YYYY');
+        } else {
+            return date;
         }
     };
 

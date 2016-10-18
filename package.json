@@ -9,6 +9,7 @@
   "author": "Kevin Schaul",
   "license": "MIT",
   "dependencies": {
+    "momentjs": "^1.1.17",
     "scrape-cache": "file:../scrape-cache",
     "underscore": "^1.8.3"
   },

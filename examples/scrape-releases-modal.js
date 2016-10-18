@@ -32,7 +32,7 @@ var getReleasesHTML = function($) {
             $this.html($this.html().replace(/[\r|\n]/mg, ' '));
 
             // Convert tags to newlines
-            $this.html($this.html().replace(/(<br[^>]*>)|(<br \/>)|(<p>)|(<\/p>)|(<ul>)|(<\/ul>)|(<li>)|(<\/li>)/g, '\n'));
+            $this.html($this.html().replace(/(<br[^>]*>)|(<br \/>)|(<p>)|(<\/p>)|(<ul>)|(<\/ul>)|(<li>)|(<\/li>)|(&#x2022;)/g, '\n'));
         });
     };
 
