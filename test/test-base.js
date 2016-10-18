@@ -2,94 +2,6 @@ var fs = require('fs');
 
 var centcomScraper = require('../src/index.js');
 
-exports.getDateFromURL = {
-    oct: function(test) {
-        var url = 'http://www.centcom.mil/en/news/articles/oct.-7-military-airstrikes-continue-against-isil-terrorists-in-syria-and-ir';
-        var expected = 'October 7, 2015';
-
-        var actual = centcomScraper.getDateFromURL(url);
-        test.equal(expected, actual);
-        test.done();
-    },
-    sept: function(test) {
-        var url = 'http://www.centcom.mil/en/news/articles/sept.-18-military-airstrikes-continue-against-isil-terrorists-in-syria-iraq';
-        var expected = 'September 18, 2015';
-
-        var actual = centcomScraper.getDateFromURL(url);
-        test.equal(expected, actual);
-        test.done();
-    },
-    july: function(test) {
-        var url = 'http://www.centcom.mil/en/news/articles/july-1-military-airstrikes-continue-against-isil-terrorists-in-syria-and-ir';
-        var expected = 'July 1, 2015';
-
-        var actual = centcomScraper.getDateFromURL(url);
-        test.equal(expected, actual);
-        test.done();
-    },
-    march: function(test) {
-        var url = 'http://www.centcom.mil/en/news/articles/march-4-military-airstrikes-continue-against-isil-in-syria-and-iraq';
-        var expected = 'March 4, 2015';
-
-        var actual = centcomScraper.getDateFromURL(url);
-        test.equal(expected, actual);
-        test.done();
-    }
-};
-
-exports.parseDate = {
-    base: function(test) {
-        var lines = [
-            'November 02, 2015',
-            'Release # 20151102-01',
-            'FOR IMMEDIATE RELEASE'
-        ];
-        var expected = 'November 02, 2015';
-
-        var actual = centcomScraper.parseDate(lines);
-        test.equal(expected, actual);
-        test.done();
-    },
-    feb6: function(test) {
-        var lines = [
-            'February 6, 2015',
-            'Release # 20151102-01',
-            'FOR IMMEDIATE RELEASE'
-        ];
-        var expected = 'February 6, 2015';
-
-        var actual = centcomScraper.parseDate(lines);
-        test.equal(expected, actual);
-        test.done();
-    }
-};
-
-exports.parseReleaseNumber = {
-    base: function(test) {
-        var lines = [
-            'November 02, 2015',
-            'Release # 20151102-01',
-            'FOR IMMEDIATE RELEASE'
-        ];
-        var expected = '20151102-01';
-
-        var actual = centcomScraper.parseReleaseNumber(lines);
-        test.equal(expected, actual);
-        test.done();
-    },
-    march4: function(test) {
-        var lines = [
-            'Release # 20150304',
-            'FOR IMMEDIATE RELEASE'
-        ];
-        var expected = '20150304';
-
-        var actual = centcomScraper.parseReleaseNumber(lines);
-        test.equal(expected, actual);
-        test.done();
-    }
-};
-
 exports.isCountryHeader = {
     base: function(test) {
         var line = 'Syria';
@@ -122,6 +34,22 @@ exports.isCountryHeader = {
         var actual = centcomScraper.isCountryHeader(line);
         test.equal(expected, actual);
         test.done();
+    },
+    notTypo: function(test) {
+        var line = 'strikes struck four separate ISIL tactical units and destroyed six ISIL fighting positions, seven ISIL vehicles, two ISIL tactical vehicles, and an ISIL house borne improvised explosive device (HBIED).         Iraq';
+        var expected = false;
+
+        var actual = centcomScraper.isCountryHeader(line);
+        test.equal(expected, actual);
+        test.done();
+    },
+    cityCountry: function(test) {
+        var line = 'Tikrit, Iraq';
+        var expected = true;
+
+        var actual = centcomScraper.isCountryHeader(line);
+        test.equal(expected, actual);
+        test.done();
     }
 };
 
@@ -131,7 +59,8 @@ exports.parseSingletrikeDescriptions = {
         var expected = {
             location: 'Al Hawl',
             number: 1,
-            description: 'strike destroyed an ISIL vehicle borne improvised explosive device (VBIED).'
+            description: 'strike destroyed an ISIL vehicle borne improvised explosive device (VBIED).',
+            line: line
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -143,7 +72,8 @@ exports.parseSingletrikeDescriptions = {
         var expected = {
             location: 'Al Hawl',
             number: 2,
-            description: 'strikes destroyed an ISIL vehicle borne improvised explosive device (VBIED).'
+            description: 'strikes destroyed an ISIL vehicle borne improvised explosive device (VBIED).',
+            line: line
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -155,7 +85,8 @@ exports.parseSingletrikeDescriptions = {
         var expected = {
             location: 'Al Hasakah',
             number: 2,
-            description: 'strikes struck two separate ISIL tactical units and destroyed five ISIL fighting positions, an ISIL rocket, two ISIL vehicles, and wounded an ISIL fighter.'
+            description: 'strikes struck two separate ISIL tactical units and destroyed five ISIL fighting positions, an ISIL rocket, two ISIL vehicles, and wounded an ISIL fighter.',
+            line: line
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -167,7 +98,8 @@ exports.parseSingletrikeDescriptions = {
         var expected = {
             location: 'Mar\'a',
             number: 6,
-            description: 'strikes struck five separate ISIL tactical units and destroyed three ISIL fighting positions, an ISIL ammo cache, an ISIL staging area, and three ISIL buildings.'
+            description: 'strikes struck five separate ISIL tactical units and destroyed three ISIL fighting positions, an ISIL ammo cache, an ISIL staging area, and three ISIL buildings.',
+            line: line
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -179,7 +111,8 @@ exports.parseSingletrikeDescriptions = {
         var expected = {
             location: 'Al Hawl',
             number: 1,
-            description: 'strike destroyed an ISIL vehicle borne improvised explosive device (VBIED).'
+            description: 'strike destroyed an ISIL vehicle borne improvised explosive device (VBIED).',
+            line: line
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -191,7 +124,8 @@ exports.parseSingletrikeDescriptions = {
         var expected = {
             location: 'Kobani',
             number: 5,
-            description: 'airstrikes destroyed eight ISIL fighting positions.'
+            description: 'airstrikes destroyed eight ISIL fighting positions.',
+            line: line
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -203,7 +137,8 @@ exports.parseSingletrikeDescriptions = {
         var expected = {
             location: 'Kobani',
             number: 5,
-            description: 'airstrikes struck an ISIL fighting position and two ISIL tactical units and destroyed an ISIL building and seven ISIL fighting positions.'
+            description: 'airstrikes struck an ISIL fighting position and two ISIL tactical units and destroyed an ISIL building and seven ISIL fighting positions.',
+            line: line
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -215,7 +150,8 @@ exports.parseSingletrikeDescriptions = {
         var expected = {
             location: 'Fallujah',
             number: 1,
-            description: 'airstrike, struck an ISIL tactical unit.'
+            description: 'airstrike, struck an ISIL tactical unit.',
+            line: line
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -227,7 +163,8 @@ exports.parseSingletrikeDescriptions = {
         var expected = {
             location: 'Sinjar',
             number: 3,
-            description: 'airstrikes struck an ISIL tactical unit and an ISIL sniper position, destroying an ISIL fighting position, an ISIL heavy machine gun and an ISIL building.'
+            description: 'airstrikes struck an ISIL tactical unit and an ISIL sniper position, destroying an ISIL fighting position, an ISIL heavy machine gun and an ISIL building.',
+            line: line
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -239,7 +176,8 @@ exports.parseSingletrikeDescriptions = {
         var expected = {
             location: 'Dawr az Zawr',
             number: 1,
-            description: 'airstrike struck an ISIL tactical unit.'
+            description: 'airstrike struck an ISIL tactical unit.',
+            line: line
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -251,7 +189,8 @@ exports.parseSingletrikeDescriptions = {
         var expected = {
             location: 'Kobani',
             number: 11,
-            description: 'airstrikes struck two large ISIL units and eight ISIL tactical units and destroyed three ISIL fighting positions, two ISIL staging positions, and an ISIL vehicle.'
+            description: 'airstrikes struck two large ISIL units and eight ISIL tactical units and destroyed three ISIL fighting positions, two ISIL staging positions, and an ISIL vehicle.',
+            line: line
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -263,7 +202,8 @@ exports.parseSingletrikeDescriptions = {
         var expected = {
             location: 'Al Asad',
             number: 3,
-            description: 'airstrikes struck two ISIL tactical units, a large ISIL unit, and an ISIL vehicle, and destroyed an ISIL IED and two ISIL vehicles.'
+            description: 'airstrikes struck two ISIL tactical units, a large ISIL unit, and an ISIL vehicle, and destroyed an ISIL IED and two ISIL vehicles.',
+            line: line
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -275,7 +215,8 @@ exports.parseSingletrikeDescriptions = {
         var expected = {
             location: 'Al Hasakah',
             number: 3,
-            description: 'airstrikes struck two ISIL tactical units and an ISIL trench system, destroying six ISIL fighting positions, two ISIL vehicles and an ISIL tank.'
+            description: 'airstrikes struck two ISIL tactical units and an ISIL trench system, destroying six ISIL fighting positions, two ISIL vehicles and an ISIL tank.',
+            line: line
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -287,7 +228,8 @@ exports.parseSingletrikeDescriptions = {
         var expected = {
             location: 'Al Hasakah',
             number: 2,
-            description: 'airstrikes struck an ISIL tactical unit and destroyed an ISIL armored personnel carrier.'
+            description: 'airstrikes struck an ISIL tactical unit and destroyed an ISIL armored personnel carrier.',
+            line: line
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);
@@ -299,7 +241,21 @@ exports.parseSingletrikeDescriptions = {
         var expected = {
             location: 'Al Hasakah',
             number: 4,
-            description: 'airstrikes struck an ISIL tactical unit, two ISIL vehicles and destroyed five ISIL vehicles and an ISIL tank.'
+            description: 'airstrikes struck an ISIL tactical unit, two ISIL vehicles and destroyed five ISIL vehicles and an ISIL tank.',
+            line: line
+        };
+
+        var actual = centcomScraper.parseSingleStrikeDescriptions(line);
+        test.deepEqual(expected, actual);
+        test.done();
+    },
+    march26Tikrit: function(test) {
+        var line = '- In Tikrit, 17 airstrikes struck an ISIL building, two ISIL bridges, three ISIL checkpoints, two ISIL staging areas, two ISIL berms, an ISIL roadblock and an ISIL controlled command and control facility.';
+        var expected = {
+            location: 'Tikrit',
+            number: 17,
+            description: 'airstrikes struck an ISIL building, two ISIL bridges, three ISIL checkpoints, two ISIL staging areas, two ISIL berms, an ISIL roadblock and an ISIL controlled command and control facility.',
+            line: line
         };
 
         var actual = centcomScraper.parseSingleStrikeDescriptions(line);

@@ -4,82 +4,29 @@ var moment = require('moment');
 var scrapeCache = require('scrape-cache');
 
 module.exports = function() {
-    var scrapeRelease = function(url, callback, opts) {
-        fetchReleaseLines(url, function(result) {
-            var parsed = parseReleaseLines(result, url, opts);
-            callback(parsed);
-        });
-    };
-
-    var fetchReleaseLines = function(url, callback) {
-        var scraper = function($) {
-            // Convert p and br tags into newlines
-            // http://stackoverflow.com/questions/3381331/jquery-convert-br-and-br-and-p-and-such-to-new-line
-            $.fn.br2nl = function() {
-                return this.each(function(i) {
-                    var $this = $(this);
-
-                    // Strip existing newlines
-                    $this.html($this.html().replace(/[\r|\n]/mg, ' '));
-
-                    // Convert tags to newlines
-                    $this.html($this.html().replace(/(<br[^>]*>)|(<br \/>)|(<p>)|(<\/p>)|(<ul>)|(<\/ul>)|(<li>)|(<\/li>)/g, '\n'));
-                });
-            };
-
-            var lines = $('.newsrelease').eq(0)
-                    .br2nl().text().split('\n');
-
-            var dateLines = $('.date').eq(0).br2nl().text().split('\n');
-
-            // Trim, filter out empty lines
-            var formattedLines = lines.map(function(d) {
-                return d.trim();
-            }).filter(function(d) {
-                return d !== '';
-            });
-            var formattedDateLines = dateLines.map(function(d) {
-                return d.trim();
-            }).filter(function(d) {
-                return d !== '';
-            });
-
-            return {
-                formattedLines: formattedLines,
-                formattedDateLines: formattedDateLines
-            };
-        };
-
-        scrapeCache.scrape(url, scraper, callback);
-    };
-
-    var fetchRelease = function(url, callback) {
-        fetchReleaseLines(url, function(result) {
-            callback(result.join('\n') + '\n');
-        });
-    };
-
-    var parseReleaseLines = function(results, url, opts) {
+    /*
+     * Parse the raw contents of a press release object
+     * @param {Object[]} results - An array of results, one per press release
+     * @param {string} results[].date - The date for the release
+     * @param {string} results[].title - The date for the release
+     * @param {string[]} results[].contents - An array of lines for the release's
+     *        main contents
+     */
+    var parseReleaseLines = function(results) {
         var strikes = [];
 
-        var date = parseDate(results.formattedDateLines);
-        var releaseNumber = parseReleaseNumber(results.formattedDateLines);
-
-        var strikeDescriptions = parseStrikeDescriptions(results.formattedLines);
-        _.each(strikeDescriptions, function(strikesInCountry, country) {
-            strikesInCountry.forEach(function(d) {
-                var partialStrike = {
-                    date: date,
-                    releaseNumber: releaseNumber,
-                    country: country,
-                    url: url
-                };
-                var strike;
-                if (opts) {
-                    strike = _.extend(partialStrike, opts);
-                }
-                strike = _.extend(partialStrike, d);
-                strikes.push(strike);
+        _.each(results, function(result) {
+            var strikeDescriptions = parseStrikeDescriptions(result.contents);
+            _.each(strikeDescriptions, function(strikesInCountry, country) {
+                strikesInCountry.forEach(function(d) {
+                    var partialStrike = {
+                        date: result.date,
+                        title: result.title,
+                        country: country
+                    };
+                    var strike = _.extend(partialStrike, d);
+                    strikes.push(strike);
+                });
             });
         });
 
@@ -107,8 +54,7 @@ module.exports = function() {
     };
 
     var isCountryHeader = function(line) {
-        // TODO This will fail for other countries
-        var match = line.match(/^[\s]*(Syria|Iraq)[\s]*$/);
+        var match = line.match(/^[\w,]*[\s]*(Syria|Iraq)[\s]*$/);
         return !!match;
     };
 
@@ -134,13 +80,14 @@ module.exports = function() {
     };
 
     var parseSingleStrikeDescriptions = function(line) {
-        var match = line.match(/^[\-\*\s•\o]*?Near ([A-Za-z '’]+?)\*?,? ([0-9]+|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen?) (.+)/);
+        var match = line.match(/^[\-\*\s•\o]*?(?:Near|In) ([A-Za-z '’]+?)\*?,? ([0-9]+|an|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen?) (.+)/);
 
         if (match) {
             return {
                 location: (match && match.length > 1) ? match[1] : false,
                 number: (match && match.length > 2) ? getNumber(match[2]) : false,
-                description: (match && match.length > 3) ? match[3] : false
+                description: (match && match.length > 3) ? match[3] : false,
+                line: line
             };
         }
     };
@@ -168,11 +115,7 @@ module.exports = function() {
     };
 
     return {
-        scrapeRelease: scrapeRelease,
-        fetchRelease: fetchRelease,
-        fetchReleaseLines: fetchReleaseLines,
         parseReleaseLines: parseReleaseLines,
-        getDateFromURL: getDateFromURL,
         parseDate: parseDate,
         parseReleaseNumber: parseReleaseNumber,
         isCountryHeader: isCountryHeader,
