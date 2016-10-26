@@ -1,6 +1,6 @@
 {
   "name": "uscentcom-isil-airstrikes-scraper",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "Scrapes USCENTOM press releases for airstrike information",
   "main": "./src/index.js",
   "scripts": {
@@ -10,7 +10,7 @@
   "license": "MIT",
   "dependencies": {
     "momentjs": "^1.1.17",
-    "scrape-cache": "file:../scrape-cache",
+    "scrape-cache": "github:kevinschaul/scrape-cache",
     "underscore": "^1.8.3"
   },
   "devDependencies": {
